@@ -47,7 +47,7 @@ const Contact = () => {
         } catch (error) {
             setIsLoading(false);
             console.log(error);
-            showAlertMessage("danger", "Somthing went wrong!");
+            showAlertMessage("danger", "Something went wrong!");
         }
     };
     return (

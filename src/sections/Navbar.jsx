@@ -1,31 +1,46 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-function Navigation() {
+
+function Navigation({ onNavClick }) {
+  const handleScroll = (e) => {
+    e.preventDefault();
+    const targetId = e.currentTarget.getAttribute("href").substring(1);
+    const target = document.getElementById(targetId);
+    if (target) {
+      window.scrollTo({
+        top: target.offsetTop - 80, // Adjust for navbar height
+        behavior: "smooth",
+      });
+    }
+    if (onNavClick) onNavClick();
+  };
+
   return (
     <ul className="nav-ul">
       <li className="nav-li">
-        <a className="nav-link" href="#home">
+        <a className="nav-link" href="#home" onClick={handleScroll}>
           Home
         </a>
       </li>
       <li className="nav-li">
-        <a className="nav-link" href="#about">
+        <a className="nav-link" href="#about" onClick={handleScroll}>
           About
         </a>
       </li>
       <li className="nav-li">
-        <a className="nav-link" href="#work">
+        <a className="nav-link" href="#work" onClick={handleScroll}>
           Work
         </a>
       </li>
       <li className="nav-li">
-        <a className="nav-link" href="#contact">
+        <a className="nav-link" href="#contact" onClick={handleScroll}>
           Contact
         </a>
       </li>
     </ul>
   );
 }
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -36,7 +51,7 @@ const Navbar = () => {
             href="/"
             className="text-xl font-bold transition-colors text-neutral-400 hover:text-white"
           >
-            Jeeva  
+            Jeeva
           </a>
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -48,9 +63,21 @@ const Navbar = () => {
               alt="toggle"
             />
           </button>
-          <nav className="hidden sm:flex">
-            <Navigation />
-          </nav>
+
+          <div className="hidden sm:flex items-center gap-10 ml-auto">
+            <nav>
+              <Navigation />
+            </nav>
+            <a
+              className="text-white font-bold text-lg hover:text-neutral-200 transition-colors"
+              href="/assets/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resume
+            </a>
+          </div>
+
         </div>
       </div>
       {isOpen && (
@@ -61,8 +88,16 @@ const Navbar = () => {
           style={{ maxHeight: "100vh" }}
           transition={{ duration: 1 }}
         >
-          <nav className="pb-5">
-            <Navigation />
+          <nav className="pb-5 flex flex-col items-center gap-4">
+            <Navigation onNavClick={() => setIsOpen(false)} />
+            <a
+              className="nav-link px-4 py-2 border border-white/20 rounded-lg hover:bg-white/10 transition-colors block w-fit mx-auto"
+              href="/assets/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resume
+            </a>
           </nav>
         </motion.div>
       )}

@@ -29,7 +29,7 @@ const About = () => {
         <div className="grid-default-color grid-2">
           <div
             ref={grid2Container}
-            className="flex items-center justify-center w-full h-full"
+            className="flex items-center justify-center w-full h-full relative"
           >
             <p className="flex items-end text-5xl text-gray-500">
               Making Devices Think
@@ -81,8 +81,8 @@ const About = () => {
           <div className="z-10 w-[50%]">
             <p className="headtext">Time Zone</p>
             <p className="subtext">
-             Based in India (IST)
-             • Available for global remote collaboration.
+              Based in India (IST)
+              • Available for global remote collaboration.
             </p>
           </div>
           <figure className="absolute left-[30%] top-[10%]">

@@ -31,17 +31,21 @@ const ProjectDetails = ({
           <div className="flex items-center justify-between mt-4">
             <div className="flex gap-3">
               {tags.map((tag) => (
-                <img
+                <span
                   key={tag.id}
-                  src={tag.path}
-                  alt={tag.name}
-                  className="rounded-lg size-10 hover-animation"
-                />
+                  className="rounded-lg py-1 px-2 border border-white/10 bg-white/5 text-white text-sm hover-animation"
+                >
+                  {tag.name}
+                </span>
               ))}
             </div>
-            <a className="inline-flex items-center gap-1 font-medium cursor-pointer hover-animation">
-              View Project{" "}
-              <img src="assets/arrow-up.svg" className="size-4" href={href} />
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 font-medium cursor-pointer hover-animation"
+            >
+              View Project <img src="assets/arrow-up.svg" className="size-4" />
             </a>
           </div>
         </div>

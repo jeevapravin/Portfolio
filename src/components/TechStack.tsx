@@ -6,28 +6,28 @@ import FuzzyText from "./FuzzyText";
 export default function TechStack() {
   const techCategories = [
     {
-      title: "Edge AI & ML",
+      title: "AI SYSTEMS",
       icon: <Cpu size={16} className="text-amber-500" />,
-      items: ["TensorRT", "ONNX Runtime", "PyTorch", "TensorFlow Lite"],
-      status: "OPTIMIZED",
-    },
-    {
-      title: "Core Languages",
-      icon: <Terminal size={16} className="text-cyan-400" />,
-      items: ["C++", "Python", "TypeScript", "Go"],
-      status: "FLUENT",
-    },
-    {
-      title: "Systems & Infra",
-      icon: <Server size={16} className="text-purple-400" />,
-      items: ["Docker", "Kubernetes", "Linux / Unix", "AWS / GCP"],
-      status: "NOMINAL",
-    },
-    {
-      title: "Frameworks & Tools",
-      icon: <Layers size={16} className="text-emerald-400" />,
-      items: ["React", "Vite", "Git", "ROS 2"],
+      items: ["Agentic AI", "Multi-Agent Systems", "RAG", "Knowledge Graphs", "LLM Applications"],
       status: "ACTIVE",
+    },
+    {
+      title: "CORE STACK",
+      icon: <Terminal size={16} className="text-cyan-400" />,
+      items: ["Python", "FastAPI", "Js", "React", "SQL"],
+      status: "PRIMARY",
+    },
+    {
+      title: "MACHINE LEARNING",
+      icon: <Layers size={16} className="text-emerald-400" />,
+      items: ["PyTorch", "XGBoost", "LightGBM", "Scikit-Learn", "TensorFlow"],
+      status: "TRAINED",
+    },
+    {
+      title: "INFRASTRUCTURE",
+      icon: <Server size={16} className="text-purple-400" />,
+      items: ["Linux", "SSH", "Tailscale", "Docker", "Redis"],
+      status: "ONLINE",
     },
   ];
 

@@ -1,3 +1,7 @@
+export const config = {
+  runtime: 'edge',
+};
+
 const SYSTEM_INSTRUCTIONS = `
 You are the JP Core AI Systems Liaison (SYS_LIAISON_v2.5), an encrypted telemetry voice guiding employers, developers, and defense contractors through the professional profile of JEEVA PRAVIN P K.
 
@@ -46,23 +50,30 @@ Detailed Core Knowledge Base regarding Jeeva Pravin P K:
 If asked questions outside Jeeva's scope, guide the user back politely, stating that JP Core Systems is optimized solely to validate Jeeva's engineering credentials, core edge pipelines, or system routing methodologies. Keep replies concise, highly readable, formatted in clean markdown, and use bullet points for technical breakdowns when useful.
 `;
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: Request) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: "Method not allowed" });
+    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { 'content-type': 'application/json' } });
   }
 
-  const { message, history } = req.body || {};
+  let body;
+  try {
+    body = await req.json();
+  } catch (err) {
+    body = {};
+  }
+
+  const { message, history } = body;
 
   if (!message) {
-    return res.status(400).json({ error: "Empty query payload." });
+    return new Response(JSON.stringify({ error: "Empty query payload." }), { status: 400, headers: { 'content-type': 'application/json' } });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    return res.json({
+    return new Response(JSON.stringify({
       reply: \`[OFFLINE MODE] Core telemetry link is currently unprovisioned. Please ensure GEMINI_API_KEY is configured in your Environment Secrets.\\n\\nFallback validation on Jeeva's local stack: True. Dijkstra routing and Tailscale nodes are fully functional offline.\`
-    });
+    }), { status: 200, headers: { 'content-type': 'application/json' } });
   }
 
   try {
@@ -101,18 +112,21 @@ export default async function handler(req: any, res: any) {
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
       console.error("Gemini API HTTP Error:", errorData);
-      throw new Error(\`Gemini API responded with \${response.status}\`);
+      return new Response(JSON.stringify({ 
+        error: "Link error with the Core intelligence array.", 
+        details: \`Gemini API responded with \${response.status}\` 
+      }), { status: 500, headers: { 'content-type': 'application/json' } });
     }
 
     const data = await response.json();
     const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "[EMPTY REPLAY DIRECTIVE RECEIVED]";
-    return res.json({ reply: replyText });
+    return new Response(JSON.stringify({ reply: replyText }), { status: 200, headers: { 'content-type': 'application/json' } });
 
   } catch (error: any) {
     console.error("Gemini Telemetry Node Error:", error);
-    return res.status(500).json({ 
+    return new Response(JSON.stringify({ 
       error: "Link error with the Core intelligence array.", 
       details: error.message 
-    });
+    }), { status: 500, headers: { 'content-type': 'application/json' } });
   }
 }

@@ -1,5 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
-
 const SYSTEM_INSTRUCTIONS = `
 You are the JP Core AI Systems Liaison (SYS_LIAISON_v2.5), an encrypted telemetry voice guiding employers, developers, and defense contractors through the professional profile of JEEVA PRAVIN P K.
 
@@ -68,15 +66,6 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const ai = new GoogleGenAI({
-      apiKey: apiKey,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
-
     const contents: any[] = [];
     
     if (history && Array.isArray(history)) {
@@ -93,16 +82,30 @@ export default async function handler(req: any, res: any) {
       parts: [{ text: message }]
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: contents,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTIONS,
-        temperature: 0.15,
-      }
+    const response = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=\${apiKey}\`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: SYSTEM_INSTRUCTIONS }]
+        },
+        contents: contents,
+        generationConfig: {
+          temperature: 0.15
+        }
+      })
     });
 
-    const replyText = response.text || "[EMPTY REPLAY DIRECTIVE RECEIVED]";
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      console.error("Gemini API HTTP Error:", errorData);
+      throw new Error(\`Gemini API responded with \${response.status}\`);
+    }
+
+    const data = await response.json();
+    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "[EMPTY REPLAY DIRECTIVE RECEIVED]";
     return res.json({ reply: replyText });
 
   } catch (error: any) {

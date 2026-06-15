@@ -47,25 +47,25 @@ If asked questions outside Jeeva's scope, guide the user back politely, stating 
 `;
 
 export default async function handler(req: any, res: any) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const { message, history } = req.body || {};
-
-  if (!message) {
-    return res.status(400).json({ error: "Empty query payload." });
-  }
-
-  const apiKey = process.env.GEMINI_API_KEY;
-
-  if (!apiKey) {
-    return res.json({
-      reply: \`[OFFLINE MODE] Core telemetry link is currently unprovisioned. Please ensure GEMINI_API_KEY is configured in your Environment Secrets.\\n\\nFallback validation on Jeeva's local stack: True. Dijkstra routing and Tailscale nodes are fully functional offline.\`
-    });
-  }
-
   try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const { message, history } = req.body || {};
+
+    if (!message) {
+      return res.status(400).json({ error: "Empty query payload." });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
+
+    if (!apiKey) {
+      return res.json({
+        reply: \`[OFFLINE MODE] Core telemetry link is currently unprovisioned. Please ensure GEMINI_API_KEY is configured in your Environment Secrets.\\n\\nFallback validation on Jeeva's local stack: True. Dijkstra routing and Tailscale nodes are fully functional offline.\`
+      });
+    }
+
     const contents: any[] = [];
     
     if (history && Array.isArray(history)) {
@@ -99,11 +99,11 @@ export default async function handler(req: any, res: any) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
+      const errorData = await response.text().catch(() => null);
       console.error("Gemini API HTTP Error:", errorData);
       return res.status(500).json({ 
         error: "Link error with the Core intelligence array.", 
-        details: \`Gemini API responded with \${response.status}\` 
+        details: \`Gemini API responded with \${response.status}: \${errorData}\` 
       });
     }
 
@@ -112,10 +112,10 @@ export default async function handler(req: any, res: any) {
     return res.json({ reply: replyText });
 
   } catch (error: any) {
-    console.error("Gemini Telemetry Node Error:", error);
+    console.error("FATAL VERCEL WRAPPER ERROR:", error);
     return res.status(500).json({ 
       error: "Link error with the Core intelligence array.", 
-      details: error.message 
+      details: error?.message || String(error)
     });
   }
 }
